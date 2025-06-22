@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI & Software Solutions for Philippine Small Businesses: A Market Study</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        .flowchart-node {
+            border: 2px solid #0077B6;
+            background-color: #CAF0F8;
+            color: #004AAD;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+        .flowchart-node:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        .flowchart-node-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding-bottom: 0.5rem;
+        }
+        .flowchart-node-header-text {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .flowchart-node-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+            color: #4B5563;
+            font-weight: 400;
+            font-size: 0.95rem;
+            text-align: left;
+            padding-top: 0;
+        }
+        .flowchart-node-content.active {
+            max-height: 500px;
+            padding-top: 0.5rem;
+        }
+
+        .flowchart-arrow-icon {
+            transition: transform 0.3s ease-in-out;
+            flex-shrink: 0;
+        }
+        .flowchart-arrow-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        .flowchart-connector {
+            width: 2px;
+            background-color: #0077B6;
+            margin: 0 auto;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -38px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #0077B6;
+            border: 4px solid #CAF0F8;
+        }
+
+        .branch-connector-container, .merge-connector-container {
+            position: relative;
+            width: 100%;
+            min-height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .branch-line-vertical-from-node3 {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 35px;
+            width: 2px;
+            background-color: #0077B6;
+        }
+
+        .branch-line-horizontal {
+            position: absolute;
+            top: 35px;
+            left: 16.66%;
+            width: 66.67%;
+            height: 2px;
+            background-color: #0077B6;
+        }
+
+        .branch-line-vertical-to-nodes4 {
+            position: absolute;
+            top: 35px;
+            width: 2px;
+            background-color: #0077B6;
+            height: 35px;
+            transform: translateX(-50%);
+        }
+
+        .merge-line-vertical-from-nodes4 {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            background-color: #0077B6;
+            height: 35px;
+            transform: translateX(-50%);
+        }
+
+        .merge-line-horizontal {
+            position: absolute;
+            top: 35px;
+            left: 16.66%;
+            width: 66.67%;
+            height: 2px;
+            background-color: #0077B6;
+        }
+
+        .merge-line-vertical-to-node5 {
+            position: absolute;
+            top: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 35px;
+            width: 2px;
+            background-color: #0077B6;
+        }
+
+        /* Styles for interactive adoption phase blocks and government support cards */
+        .adoption-phase-block, .gov-support-card {
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            border-left: 8px solid;
+        }
+        .adoption-phase-block.micro { border-color: #90E0EF; }
+        .adoption-phase-block.small { border-color: #0077B6; }
+        .adoption-phase-block.medium { border-color: #004AAD; }
+        .adoption-phase-block.large { border-color: #4B5563; }
+
+        .adoption-phase-block:hover, .gov-support-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        .adoption-phase-block-header, .gov-support-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .adoption-phase-block h3, .gov-support-card h3 {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #004AAD;
+        }
+        .adoption-phase-block .phase-title, .gov-support-card .agency-title {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: #0077B6;
+            margin-top: 0.25rem;
+        }
+
+        .adoption-phase-block-content, .gov-support-card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+            color: #4B5563;
+            line-height: 1.5;
+            text-align: left;
+        }
+        .adoption-phase-block-content.active, .gov-support-card-content.active {
+            max-height: 500px;
+        }
+
+        .arrow-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+        .arrow-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            transform: scale(0.9);
+            transition: transform 0.3s ease-in-out;
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .modal-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .modal-button.confirm {
+            background-color: #0077B6;
+            color: white;
+        }
+        .modal-button.confirm:hover {
+            background-color: #005f93;
+        }
+        .modal-button.cancel {
+            background-color: #E5E7EB;
+            color: #374151;
+        }
+        .modal-button.cancel:hover {
+            background-color: #D1D5DB;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#004AAD] mb-2">AI & Software Solutions for Philippine Small Businesses</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto">A Market Study: A New Frontier for Growth and Efficiency in the Philippines.</p>
+            <p class="text-md text-gray-500 max-w-4xl mx-auto mt-4">All monetary values are expressed in US Dollars (USD).</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <section class="lg:col-span-2 bg-white rounded-lg shadow-lg p-6 md:p-8 flex flex-col md:flex-row items-center justify-around">
+                <div class="text-center md:text-left mb-6 md:mb-0">
+                    <h2 class="text-2xl font-bold text-[#004AAD] mb-2">Projected Annual Market Value by 2030</h2>
+                    <p class="text-6xl font-extrabold text-[#0077B6]">$5.2 Billion</p>
+                    <p class="text-md text-gray-500 mt-2">Driven by digital transformation, increased productivity, and enhanced competitiveness.</p>
+                </div>
+                <div class="w-full max-w-xs md:max-w-sm">
+                    <h3 class="text-center text-xl font-bold text-[#004AAD] mb-3">Contribution to Philippine GDP</h3>
+                    <div class="chart-container h-64 md:h-72">
+                         <canvas id="gdpContributionChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="lg:col-span-2 bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center text-[#004AAD] mb-4">Navigating the Adoption Landscape</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-8">The critical path to establishing AI and software solutions in Philippine SMEs involves a multi-stage approach, focusing on awareness, adoption, and integration. This structured approach ensures scalability, user- friendliness, and measurable impact.</p>
+                <div class="flex flex-col items-center">
+                    <div class="flowchart-node w-full md:w-1/2" onclick="toggleFlowchartAccordion(this)">
+                        <div class="flowchart-node-header">
+                            <div class="flowchart-node-header-text">1. Awareness & Education Campaigns</div>
+                            <svg class="flowchart-arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="flowchart-node-content">
+                            <p>Focus on increasing SME understanding of AI and software benefits. Programs include workshops, seminars, and online resources highlighting practical applications and success stories. This addresses initial hesitation and knowledge gaps.</p>
+                        </div>
+                    </div>
+                    <div class="flowchart-connector h-8"></div>
+
+                    <div class="flowchart-node w-full md:w-1/2" onclick="toggleFlowchartAccordion(this)">
+                        <div class="flowchart-node-header">
+                            <div class="flowchart-node-header-text">2. Pilot Programs & Demonstrations</div>
+                            <svg class="flowchart-arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="flowchart-node-content">
+                            <p>Implementing small-scale, proof-of-concept projects with selected SMEs. This allows businesses to experience the tangible benefits firsthand, build confidence, and provide feedback for solution refinement before full-scale adoption.</p>
+                        </div>
+                    </div>
+                    <div class="flowchart-connector h-8"></div>
+
+                    <div class="flowchart-node w-full md:w-1/2" onclick="toggleFlowchartAccordion(this)">
+                        <div class="flowchart-node-header">
+                            <div class="flowchart-node-header-text">3. Customization & Integration</div>
+                            <svg class="flowchart-arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="flowchart-node-content">
+                            <p>Tailoring AI and software solutions to specific business needs. This involves adapting generic platforms, integrating with existing systems, and ensuring seamless workflow alignment. It is crucial for maximizing relevance and minimizing disruption.</p>
+                        </div>
+                    </div>
+
+                    <div class="branch-connector-container mt-2">
+                        <div class="branch-line-vertical-from-node3"></div>
+                        <div class="branch-line-horizontal"></div>
+                        <div class="branch-line-vertical-to-nodes4" style="left: 16.66%;"></div>
+                        <div class="branch-line-vertical-to-nodes4" style="left: 50%;"></div>
+                        <div class="branch-line-vertical-to-nodes4" style="left: 83.33%;"></div>
+                    </div>
+
+                    <div class="w-full flex flex-col md:flex-row justify-center items-start gap-4">
+                        <div class="w-full md:w-1/3 flex flex-col items-center">
+                            <div class="flowchart-node w-full" onclick="toggleFlowchartAccordion(this)">
+                                <div class="flowchart-node-header">
+                                    <div class="flowchart-node-header-text">3a. Business Process Analysis & Mapping</div>
+                                    <svg class="flowchart-arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                                <div class="flowchart-node-content">
+                                    <p>Detailed assessment of current business processes to identify areas for optimization and digital transformation. Mapping current workflows helps design solutions that truly address operational inefficiencies.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full md:w-1/3 flex flex-col items-center">
+                            <div class="flowchart-node w-full" onclick="toggleFlowchartAccordion(this)">
+                                <div class="flowchart-node-header">
+                                    <div class="flowchart-node-header-text">3b. Software Dev/<br>Customization</div>
+                                    <svg class="flowchart-arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                                <div class="flowchart-node-content">
+                                    <p>Building or modifying software to fit unique operational requirements. This may involve developing bespoke modules, configuring existing platforms, or integrating disparate systems to create a cohesive digital environment.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full md:w-1/3 flex flex-col items-center">
+                            <div class="flowchart-node w-full" onclick="toggleFlowchartAccordion(this)">
+                                <div class="flowchart-node-header">
+                                    <div class="flowchart-node-header-text">3c. Data Migration & System Setup</div>
+                                    <svg class="flowchart-arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                                <div class="flowchart-node-content">
+                                    <p>Transferring existing business data to new systems and configuring software infrastructure. This critical step ensures data integrity and operational readiness, minimizing downtime during the transition.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="merge-connector-container mb-2">
+                        <div class="merge-line-vertical-from-nodes4" style="left: 16.66%;"></div>
+                        <div class="merge-line-vertical-from-nodes4" style="left: 50%;"></div>
+                        <div class="merge-line-vertical-from-nodes4" style="left: 83.33%;"></div>
+                        <div class="merge-line-horizontal"></div>
+                        <div class="merge-line-vertical-to-node5"></div>
+                    </div>
+
+                    <div class="flowchart-node w-full md:w-1/2" onclick="toggleFlowchartAccordion(this)">
+                        <div class="flowchart-node-header">
+                            <div class="flowchart-node-header-text">4. Training & Support Deployment</div>
+                            <svg class="flowchart-arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="flowchart-node-content">
+                            <p>Equipping SME employees with the necessary skills to effectively use new AI tools and software. Comprehensive training programs, ongoing technical support, and user documentation are vital for successful adoption and sustained productivity.</p>
+                        </div>
+                    </div>
+                    <div class="flowchart-connector h-8"></div>
+                    <div class="flowchart-node w-full md:w-1/2 bg-[#0077B6] text-white" onclick="toggleFlowchartAccordion(this)">
+                        <div class="flowchart-node-header">
+                            <div class="flowchart-node-header-text">5. Performance Monitoring & Optimization</div>
+                            <svg class="flowchart-arrow-icon w-6 h-6 text-gray-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="flowchart-node-content text-white">
+                            <p>Continuously tracking the performance of implemented AI and software solutions. This involves collecting data on efficiency gains, ROI, and user feedback to identify areas for further optimization and ensure long-term value creation.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#004AAD] mb-2">Investment Landscape</h2>
+                <p class="text-gray-600 mb-6">Capital investment for AI and software solutions for SMEs is substantial, with the majority allocated to software development and infrastructure. Training and support represent significant secondary costs.</p>
+                 <div class="chart-container">
+                    <canvas id="investmentChart"></canvas>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#004AAD] mb-2">Projected Revenue Growth</h2>
+                <p class="text-gray-600 mb-6">Following a successful launch, revenue is projected to grow steadily, driven by increasing SME adoption and expansion of service offerings. The first five years are critical for establishing market position.</p>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </section>
+
+            <section class="lg:col-span-2 bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center text-[#004AAD] mb-4">The Blueprint for Success: Project Timeline</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-10">The journey from concept to widespread adoption is a multi-year endeavor, typically spanning 36-48 months. Each phase has critical dependencies and requires meticulous project management to mitigate delays.</p>
+                <div class="relative pl-10 border-l-4 border-[#90E0EF]">
+                    <div class="mb-10 ml-4 relative timeline-item">
+                        <h3 class="text-xl font-bold text-[#004AAD]">Phase 1: Research & Development (Months 1-9)</h3>
+                        <p class="text-gray-600">Market analysis, technology stack selection, prototype development, and securing initial funding.</p>
+                    </div>
+                    <div class="mb-10 ml-4 relative timeline-item">
+                        <h3 class="text-xl font-bold text-[#004AAD]">Phase 2: Pilot & Refinement (Months 10-18)</h3>
+                        <p class="text-gray-600">Beta testing with selected SMEs, gathering feedback, and iterative product refinement.</p>
+                    </div>
+                    <div class="mb-10 ml-4 relative timeline-item">
+                        <h3 class="text-xl font-bold text-[#004AAD]">Phase 3: Market Entry & Scaling (Months 19-36)</h3>
+                        <p class="text-gray-600">Aggressive marketing, sales channel development, onboarding initial clients, and expanding service capabilities.</p>
+                    </div>
+                    <div class="ml-4 relative timeline-item">
+                        <h3 class="text-xl font-bold text-[#004AAD]">Phase 4: Growth & Diversification (Months 37-48)</h3>
+                        <p class="text-gray-600">Introducing new features, targeting niche markets, and exploring strategic partnerships.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#004AAD] mb-2">Hypothetical Competitive Arena</h2>
+                <p class="text-gray-600 mb-6">The Philippine SME software market is expected to attract both local and international providers. Initial market share will be influenced by solution comprehensiveness, ease of use, and pricing models.</p>
+                <div class="chart-container">
+                    <canvas id="marketShareChart"></canvas>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#004AAD] mb-2">Target SME Profile Analysis</h2>
+                <p class="text-gray-600 mb-6">Success hinges on appealing to a diverse SME base. While micro-enterprises are a large segment, small and medium-sized businesses with specific operational challenges are crucial secondary markets with different priorities.</p>
+                <div class="chart-container">
+                    <canvas id="smeProfileChart"></canvas>
+                </div>
+            </section>
+
+            <section class="lg:col-span-2 bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center text-[#004AAD] mb-4">AI & Software Adoption Phases by SME Category</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-8">The journey towards AI and software integration varies significantly across different SME sizes, influenced by budget, technical literacy, and operational complexity. Understanding these phases is key to targeted solution development.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                    <div class="adoption-phase-block micro" onclick="toggleAccordion(this)">
+                        <div class="adoption-phase-block-header">
+                            <div>
+                                <h3>Micro Enterprises</h3>
+                                <div class="phase-title">Foundational Adoption / Awareness</div>
+                            </div>
+                            <svg class="arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="adoption-phase-block-content">
+                            <p>Initiating digital presence with foundational, low-cost solutions to streamline core operations. Focus is on immediate efficiency gains and accessibility, enabling a digital footprint with minimal investment and technical overhead.</p>
+                        </div>
+                    </div>
+
+                    <div class="adoption-phase-block small" onclick="toggleAccordion(this)">
+                        <div class="adoption-phase-block-header">
+                            <div>
+                                <h3>Small Enterprises</h3>
+                                <div class="phase-title">Problem-Solving Adoption / Initial Integration</div>
+                            </div>
+                            <svg class="arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="adoption-phase-block-content">
+                            <p>Strategic adoption of targeted solutions to address key operational pain points and expand market reach. Investment prioritizes measurable return on investment (ROI) and scalable SaaS platforms for core business functions.</p>
+                        </div>
+                    </div>
+
+                    <div class="adoption-phase-block medium" onclick="toggleAccordion(this)">
+                        <div class="adoption-phase-block-header">
+                            <div>
+                                <h3>Medium Enterprises</h3>
+                                <div class="phase-title">Strategic Adoption / Systematization</div>
+                            </div>
+                            <svg class="arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="adoption-phase-block-content">
+                            <p>Implementing integrated enterprise systems to drive data-driven decision-making and optimize end-to-end processes. Strategic adoption of advanced analytics and specialized software enhances operational scalability and competitive positioning.</p>
+                        </div>
+                    </div>
+
+                    <div class="adoption-phase-block large" onclick="toggleAccordion(this)">
+                        <div class="adoption-phase-block-header">
+                            <div>
+                                <h3>Large Enterprises</h3>
+                                <div class="phase-title">Advanced Innovation / Digital Transformation</div>
+                            </div>
+                            <svg class="arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="adoption-phase-block-content">
+                            <p>Driving market leadership through pioneering AI integration and custom solution development. Focus on disruptive innovation, predictive intelligence, and strategic partnerships to secure long-term competitive advantage.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="lg:col-span-2 bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center text-[#004AAD] mb-4">Government Support Ecosystem for SME Digital Transformation in the Philippines</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-8">The Philippine government plays a vital role in fostering an environment conducive to SME digitalization. Various agencies offer targeted support across technical assistance, business setup, talent development, licensing, and financial grants, guiding enterprises through their AI and software adoption journey.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    <div class="gov-support-card" onclick="toggleAccordion(this)">
+                        <div class="gov-support-card-header">
+                            <h3>DICT</h3>
+                            <svg class="arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="gov-support-card-content">
+                            <div class="agency-title">(Dept. of Info. & Comm. Tech.)</div>
+                            <p class="mt-2"><strong>Key Support Areas:</strong> Digital transformation, infrastructure, cybersecurity, e-governance.</p>
+                            <p class="mt-1"><strong>Specific Programs/Initiatives:</strong> "Digital Cities" program, National Broadband Plan, Cybersecurity Plan, e-government initiatives.</p>
+                            <p class="mt-1"><strong>Relevance to SME Adoption Phase:</strong> Provides foundational digital infrastructure for all SMEs. Specific digital tools and platforms for Micro/Small. Cybersecurity guidelines and large-scale digital initiatives benefit Medium/Large. <a href="https://dict.gov.ph/" target="_blank" class="text-blue-600 hover:underline" onclick="handleLinkClick(event, 'https://dict.gov.ph/')">Visit DICT Website</a>.</p>
+                        </div>
+                    </div>
+
+                    <div class="gov-support-card" onclick="toggleAccordion(this)">
+                        <div class="gov-support-card-header">
+                            <h3>DTI</h3>
+                            <svg class="arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="gov-support-card-content">
+                            <div class="agency-title">(Dept. of Trade & Industry)</div>
+                            <p class="mt-2"><strong>Key Support Areas:</strong> MSME development, ease of doing business, business registration, startup support, industry development.</p>
+                            <p class="mt-1"><strong>Specific Programs/Initiatives:</strong> Negosyo Centers (business registration, advisory), SME Roving Academy, Go Digital Pilipinas, Startup Development Program.</p>
+                            <p class="mt-1"><strong>Relevance to SME Adoption Phase:</strong> Direct support for Micro/Small in business setup and initial digital adoption. Mentorship and training for Small/Medium. Market access and incubation for Medium/Large startups. <a href="https://www.dti.gov.ph/" target="_blank" class="text-blue-600 hover:underline" onclick="handleLinkClick(event, 'https://www.dti.gov.ph/')">Visit DTI Website</a>.</p>
+                        </div>
+                    </div>
+
+                    <div class="gov-support-card" onclick="toggleAccordion(this)">
+                        <div class="gov-support-card-header">
+                            <h3>DOST</h3>
+                            <svg class="arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="gov-support-card-content">
+                            <div class="agency-title">(Dept. of Science & Tech.)</div>
+                            <p class="mt-2"><strong>Key Support Areas:</strong> Research & Development (R&D), innovation, technology transfer, grants.</p>
+                            <p class="mt-1"><strong>Specific Programs/Initiatives:</strong> Startup Research Grant, Technology Innovation for Commercialization (TECHNICOM), various R&D grants for emerging technologies including AI.</p>
+                            <p class="mt-1"><strong>Relevance to SME Adoption Phase:</strong> Primarily supports Medium/Large SMEs and startups focused on developing new AI/software solutions, offering funding for R&D and commercialization. <a href="https://www.dost.gov.ph/" target="_blank" class="text-blue-600 hover:underline" onclick="handleLinkClick(event, 'https://www.dost.gov.ph/')">Visit DOST Website</a>.</p>
+                        </div>
+                    </div>
+
+                    <div class="gov-support-card" onclick="toggleAccordion(this)">
+                        <div class="gov-support-card-header">
+                            <h3>PEZA</h3>
+                            <svg class="arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="gov-support-card-content">
+                            <div class="agency-title">(Philippine Economic Zone Authority)</div>
+                            <p class="mt-2"><strong>Key Support Areas:</strong> Investment incentives, special economic zones for IT-BPM.</p>
+                            <p class="mt-1"><strong>Specific Programs/Initiatives:</strong> Income Tax Holiday (ITH), Special Corporate Income Tax (SCIT), VAT zero-rating, duty-free importation for IT enterprises.</p>
+                            <p class="mt-1"><strong>Relevance to SME Adoption Phase:</strong> Highly relevant for Medium/Large BPO and IT companies looking to scale operations, offering significant financial incentives. Less direct for Micro/Small unless part of a larger ecosystem in PEZA zones. <a href="https://peza.gov.ph/" target="_blank" class="text-blue-600 hover:underline" onclick="handleLinkClick(event, 'https://peza.gov.ph/')">Visit PEZA Website</a>.</p>
+                        </div>
+                    </div>
+
+                    <div class="gov-support-card" onclick="toggleAccordion(this)">
+                        <div class="gov-support-card-header">
+                            <h3>TESDA</h3>
+                            <svg class="arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="gov-support-card-content">
+                            <div class="agency-title">(Tech. Educ. & Skills Dev. Authority)</div>
+                            <p class="mt-2"><strong>Key Support Areas:</strong> Workforce development, technical-vocational education, skills training.</p>
+                            <p class="mt-1"><strong>Specific Programs/Initiatives:</strong> Various training programs for digital skills, IT-related courses, upskilling/reskilling initiatives for emerging technologies.</p>
+                            <p class="mt-1"><strong>Relevance to SME Adoption Phase:</strong> Crucial for all SME categories for manning and upskilling their workforce to utilize AI and software tools effectively, particularly for Micro/Small entering digital work and Medium/Large requiring specialized talent. <a href="https://www.tesda.gov.ph/" target="_blank" class="text-blue-600 hover:underline" onclick="handleLinkClick(event, 'https://www.tesda.gov.ph/')">Visit TESDA Website</a>.</p>
+                        </div>
+                    </div>
+
+                    <div class="gov-support-card" onclick="toggleAccordion(this)">
+                        <div class="gov-support-card-header">
+                            <h3>BSP</h3>
+                            <svg class="arrow-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="gov-support-card-content">
+                            <div class="agency-title">(Bangko Sentral ng Pilipinas)</div>
+                            <p class="mt-2"><strong>Key Support Areas:</strong> Digital payments, financial technology (FinTech) regulation and promotion.</p>
+                            <p class="mt-1"><strong>Specific Programs/Initiatives:</strong> Regulatory Sandbox for FinTech innovators, promotion of digital payment solutions (e.g., QR PH).</p>
+                            <p class="mt-1"><strong>Relevance to SME Adoption Phase:</strong> Indirectly supports all SMEs by promoting adoption of digital payment solutions and fintech, which are foundational software applications enabling digital transactions and e-commerce. <a href="https://www.bsp.gov.ph/" target="_blank" class="text-blue-600 hover:underline" onclick="handleLinkClick(event, 'https://www.bsp.gov.ph/')">Visit BSP Website</a>.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-12 text-gray-500 text-sm">
+            <p>&copy; 2025 AI Solutions & Insights Group. All rights reserved.</p>
+            <p class="mt-1">This market study infographic is for illustrative purposes.</p>
+        </footer>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmationModal" class="modal-overlay">
+        <div class="modal-content">
+            <p class="text-lg font-semibold text-[#004AAD] mb-4">You are about to leave this page.</p>
+            <p class="text-gray-700">Do you wish to proceed to the external website?</p>
+            <div class="modal-buttons">
+                <button class="modal-button cancel" onclick="cancelNavigation()">Cancel</button>
+                <button class="modal-button confirm" onclick="proceedNavigation()">Navigate Away</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const brilliantBlues = {
+        dark: '#004AAD',
+        medium: '#0077B6',
+        light: '#90E0EF',
+        veryLight: '#CAF0F8',
+        text: '#374151',
+        grid: '#E5E7EB'
+    };
+
+    const tooltipTitleCallback = (tooltipItems) => {
+        const item = tooltipItems[0];
+        let label = item.chart.data.labels[item.dataIndex];
+        if (Array.isArray(label)) {
+            return label.join(' ');
+        }
+        return label;
+    };
+
+    function wrapLabel(str, maxWidth) {
+        if (!str) return '';
+        if (str.length <= maxWidth) {
+            return str;
+        }
+        const words = str.split(' ');
+        let lines = [];
+        let currentLine = '';
+        words.forEach(word => {
+            if ((currentLine + ' ' + word).trim().length > maxWidth && currentLine.length > 0) {
+                lines.push(currentLine);
+                currentLine = word;
+            } else {
+                currentLine = (currentLine + ' ' + word).trim();
+            }
+        });
+        if (currentLine.length > 0) {
+            lines.push(currentLine);
+        }
+        return lines;
+    }
+
+    const commonChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: brilliantBlues.text,
+                    font: { family: "'Inter', sans-serif", size: 14 }
+                }
+            },
+            tooltip: {
+                enabled: true,
+                callbacks: { title: tooltipTitleCallback }
+            }
+        },
+        scales: {
+            y: {
+                ticks: { color: brilliantBlues.text, font: { family: "'Inter', sans-serif" } },
+                grid: { color: brilliantBlues.grid }
+            },
+            x: {
+                ticks: { color: brilliantBlues.text, font: { family: "'Inter', sans-serif" } },
+                grid: { display: false }
+            }
+        }
+    };
+
+    new Chart(document.getElementById('gdpContributionChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: ['AI & Software Solutions for SMEs', 'Other Digital Economy Sectors'],
+            datasets: [{
+                data: [15, 85],
+                backgroundColor: [brilliantBlues.medium, brilliantBlues.light],
+                borderColor: ['#FFFFFF'],
+                borderWidth: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { color: brilliantBlues.text, font: { family: "'Inter', sans-serif" } } },
+                tooltip: { callbacks: { title: tooltipTitleCallback } }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('investmentChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Solution A (Basic CRM)', 'Solution B (AI-driven Analytics)'],
+            datasets: [{
+                label: 'Software Development & Customization',
+                data: [150, 250],
+                backgroundColor: brilliantBlues.dark,
+            }, {
+                label: 'Infrastructure & Cloud Services',
+                data: [50, 80],
+                backgroundColor: brilliantBlues.medium,
+            }, {
+                label: 'Training & Support',
+                data: [30, 60],
+                backgroundColor: brilliantBlues.light,
+            }]
+        },
+        options: {
+            ...commonChartOptions,
+            scales: {
+                x: { stacked: true, ticks: { color: brilliantBlues.text, font: { family: "'Inter', sans-serif" } } },
+                y: {
+                    stacked: true,
+                    ticks: {
+                        callback: (val) => `$${val}M (USD)`,
+                        color: brilliantBlues.text,
+                        font: { family: "'Inter', sans-serif" }
+                    },
+                    grid: { color: brilliantBlues.grid }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: brilliantBlues.text,
+                        font: { family: "'Inter', sans-serif" }
+                    }
+                },
+                tooltip: { callbacks: { title: tooltipTitleCallback } }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('revenueChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
+            datasets: [{
+                label: 'Subscriptions & Licenses',
+                data: [0.5, 0.9, 1.4, 2.0, 2.7],
+                borderColor: brilliantBlues.dark,
+                backgroundColor: brilliantBlues.dark + '33',
+                fill: true,
+                tension: 0.4
+            }, {
+                label: 'Custom Solutions & Services',
+                data: [0.3, 0.7, 1.2, 1.8, 2.5],
+                borderColor: brilliantBlues.medium,
+                backgroundColor: brilliantBlues.medium + '33',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            ...commonChartOptions,
+            scales: {
+                ...commonChartOptions.scales,
+                y: {
+                    ticks: {
+                        callback: (val) => `$${val}B (USD)`,
+                        color: brilliantBlues.text,
+                        font: { family: "'Inter', sans-serif" }
+                    },
+                    grid: { color: brilliantBlues.grid }
+                },
+                x: {
+                    ticks: { color: brilliantBlues.text, font: { family: "'Inter', sans-serif" } },
+                    grid: { display: false }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: brilliantBlues.text,
+                        font: { family: "'Inter', sans-serif" }
+                    }
+                },
+                tooltip: { callbacks: { title: tooltipTitleCallback } }
+            }
+        }
+    });
+
+    const marketShareLabelsRaw = ['Local AI & Software Startups', 'Established Local IT Firms', 'International SaaS Providers', 'Telecom & Tech Conglomerates', 'Niche Solution Providers'];
+    const marketShareLabels = marketShareLabelsRaw.map(label => wrapLabel(label, 20));
+
+    new Chart(document.getElementById('marketShareChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: marketShareLabels,
+            datasets: [{
+                label: 'Hypothetical Market Share (%)',
+                data: [30, 25, 20, 15, 10],
+                backgroundColor: [brilliantBlues.dark, brilliantBlues.medium, brilliantBlues.light, brilliantBlues.veryLight, '#A0AEC0'],
+                borderColor: '#FFFFFF',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            ...commonChartOptions,
+            indexAxis: 'y',
+            plugins: {
+                legend: { display: false },
+                tooltip: { callbacks: { title: tooltipTitleCallback } }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        callback: (val) => `${val}%`,
+                        color: brilliantBlues.text,
+                        font: { family: "'Inter', sans-serif" }
+                    },
+                    grid: { color: brilliantBlues.grid }
+                },
+                y: {
+                    ticks: { color: brilliantBlues.text, font: { family: "'Inter', sans-serif" } },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+
+    const mapNeedToValue = (need) => {
+        switch (need) {
+            case 'High': return 3;
+            case 'Medium': return 2;
+            case 'Low': return 1;
+            default: return 0;
+        }
+    };
+
+    new Chart(document.getElementById('smeProfileChart').getContext('2d'), {
+        type: 'radar',
+        data: {
+            labels: ['Operational Efficiency', 'Customer Management (CRM)', 'Financial Management', 'Inventory/Supply Chain', 'Data Analytics', 'Marketing Automation'],
+            datasets: [{
+                label: 'Micro-Enterprise Priority',
+                data: [
+                    mapNeedToValue('High'),
+                    mapNeedToValue('Medium'),
+                    mapNeedToValue('High'),
+                    mapNeedToValue('Low'),
+                    mapNeedToValue('Low'),
+                    mapNeedToValue('Low')
+                ],
+                borderColor: brilliantBlues.dark,
+                backgroundColor: brilliantBlues.dark + '40',
+                pointBackgroundColor: brilliantBlues.dark,
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: brilliantBlues.dark
+            }, {
+                label: 'Medium Business Priority',
+                data: [
+                    mapNeedToValue('High'),
+                    mapNeedToValue('High'),
+                    mapNeedToValue('High'),
+                    mapNeedToValue('High'),
+                    mapNeedToValue('High'),
+                    mapNeedToValue('High')
+                ],
+                borderColor: brilliantBlues.medium,
+                backgroundColor: brilliantBlues.medium + '40',
+                pointBackgroundColor: brilliantBlues.medium,
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: brilliantBlues.medium
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top', labels: { color: brilliantBlues.text, font: { family: "'Inter', sans-serif" } } },
+                tooltip: { callbacks: { title: tooltipTitleCallback } }
+            },
+            scales: {
+                r: {
+                    angleLines: { color: brilliantBlues.grid },
+                    grid: { color: brilliantBlues.grid },
+                    pointLabels: {
+                        color: brilliantBlues.text,
+                        font: { size: 12, family: "'Inter', sans-serif" }
+                    },
+                    ticks: {
+                        backdropColor: 'rgba(255, 255, 255, 0.75)',
+                        color: brilliantBlues.text,
+                        beginAtZero: true,
+                        max: 3,
+                        stepSize: 1,
+                        callback: function(value, index, values) {
+                            if (value === 1) return 'Low';
+                            if (value === 2) return 'Medium';
+                            if (value === 3) return 'High';
+                            return '';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Toggle function for adoption phases and government support
+    window.toggleAccordion = function(element) {
+        const content = element.querySelector('.adoption-phase-block-content, .gov-support-card-content');
+        const arrow = element.querySelector('.arrow-icon');
+
+        if (content.classList.contains('active')) {
+            content.classList.remove('active');
+            arrow.classList.remove('rotated');
+        } else {
+            const parentSection = element.closest('section');
+            const allActiveContents = parentSection.querySelectorAll('.adoption-phase-block-content.active, .gov-support-card-content.active');
+            allActiveContents.forEach(item => {
+                item.classList.remove('active');
+                item.parentElement.querySelector('.arrow-icon').classList.remove('rotated');
+            });
+
+            content.classList.add('active');
+            arrow.classList.add('rotated');
+        }
+    };
+
+    // Toggle function specifically for flowchart nodes
+    window.toggleFlowchartAccordion = function(element) {
+        const content = element.querySelector('.flowchart-node-content');
+        const arrow = element.querySelector('.flowchart-arrow-icon');
+
+        if (content.classList.contains('active')) {
+            content.classList.remove('active');
+            arrow.classList.remove('rotated');
+        } else {
+            const allActiveContents = element.closest('.flex-col').querySelectorAll('.flowchart-node-content.active');
+            allActiveContents.forEach(item => {
+                item.classList.remove('active');
+                item.parentElement.querySelector('.flowchart-arrow-icon').classList.remove('rotated');
+            });
+
+            content.classList.add('active');
+            arrow.classList.add('rotated');
+        }
+    };
+
+    let currentNavigatingUrl = '';
+    const confirmationModal = document.getElementById('confirmationModal');
+
+    window.handleLinkClick = function(event, url) {
+        event.preventDefault(); // Prevent default link navigation
+        currentNavigatingUrl = url;
+        confirmationModal.classList.add('active');
+    };
+
+    window.proceedNavigation = function() {
+        confirmationModal.classList.remove('active');
+        if (currentNavigatingUrl) {
+            window.open(currentNavigatingUrl, '_blank');
+            currentNavigatingUrl = ''; // Clear URL after navigation
+        }
+    };
+
+    window.cancelNavigation = function() {
+        confirmationModal.classList.remove('active');
+        currentNavigatingUrl = ''; // Clear URL
+    };
+
+});
+</script>
+</body>
+</html>
